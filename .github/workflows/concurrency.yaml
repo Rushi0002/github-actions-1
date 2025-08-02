@@ -1,0 +1,37 @@
+# Note : Concurrency can be declared at workflow level as well as job level
+name: Concurrency 
+
+on:
+    workflow_dispatch: 
+
+env:
+    CONTAINER_REGISTRY: docker.io
+    # {{vars.DOCKER_USERNAME}}: rushikeshv03
+    IMAGE_NAME: github-actions-nginx
+
+jobs:
+    docker:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Docker Build
+              run: echo docker build -t ${{env.CONTAINER_REGISTRY}}/${{vars.DOCKER_USERNAME}}/$IMAGE_NAME:latest
+
+            - name: Docker Login
+            #   env:
+            #     DOCKER_PASSWORD: 123
+            #   run: echo docker login --username=$DOCKER_USERNAME --password=$DOCKER_PASSWORD
+              run: echo docker login --username=${{vars.DOCKER_USERNAME}} --password=${{secrets.DOCKER_PASSWORD}}
+
+            - name: Docker Publish
+              run: echo docker push $CONTAINER_REGISTRY/${{vars.DOCKER_USERNAME}}/$IMAGE_NAME:latest
+
+    deploy:
+        needs: docker
+        # It cancel current running workflow of same concurrency group and runs latest workflow if cancel-in-progress is set to true
+        concurrency: 
+            group: production-deployment
+            cancel-in-progress: true
+        runs-on: ubuntu-latest
+        steps:
+          - name: Docker Run
+            run: echo docker run -d -p 8080:80 $CONTAINER_REGISTRY/${{vars.DOCKER_USERNAME}}/$IMAGE_NAME:latest
