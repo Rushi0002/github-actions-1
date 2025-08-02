@@ -1,9 +1,10 @@
 # Note: To access Repository level variables use 'vars' and for secrets use 'secrets'
-name: Exploring Variables and Secrets
+name: Exploring Events
 
 on:
-    schedule:
-      - cron: "* * * * *"
+    workflow_dispatch: 
+    # schedule:
+    #     - cron: "*/5 * * * *"  # runs after every 5 minutes
 
 env:
     CONTAINER_REGISTRY: docker.io
