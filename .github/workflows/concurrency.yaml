@@ -34,4 +34,5 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - name: Docker Run
+            timeout-minutes: 1 # we can define it at job level or step level in minutes
             run: echo docker run -d -p 8080:80 $CONTAINER_REGISTRY/${{vars.DOCKER_USERNAME}}/$IMAGE_NAME:latest
