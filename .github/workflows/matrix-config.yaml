@@ -7,9 +7,19 @@ on:
 jobs:
     deploy:
         strategy:
+          fail-fast: false
+          max-parallel: 2
           matrix:
             os: [ubuntu-latest, ubuntu-20.04, windows-latest]
             images: [hello-world, alpine]
+            # alpine image will not run on windows because it is excluded
+            exclude:
+              - images: alpine
+                os: windows-latest
+            # amd64/alpine only runs on ubuntu-20.04 because it is included
+            include:
+              - images: amd64/alpine
+                os: ubuntu-20.04
         runs-on: ${{matrix.os}}
         steps:
             - name: Echo Docker Details
