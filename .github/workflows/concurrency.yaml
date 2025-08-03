@@ -25,7 +25,9 @@ jobs:
             - name: Docker Publish
               run: echo docker push $CONTAINER_REGISTRY/${{vars.DOCKER_USERNAME}}/$IMAGE_NAME:latest
 
+    # Deploy job only runs if we push in main branch because of if condition
     deploy:
+        if: github.ref == 'refs/heads/main' 
         needs: docker
         # It cancel current running workflow of same concurrency group and runs latest workflow if cancel-in-progress is set to true
         concurrency: 

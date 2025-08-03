@@ -1,0 +1,28 @@
+name: Filters & Activities
+
+on:
+    workflow_dispatch: 
+    # schedule:
+    #     - cron "*/59 * * * *"
+    push:
+        # we can not use both filters at same time
+        # branches-ignore: 
+        #     - feature/*    # feature/add-to-cart
+        #     - test/**      # test/ui/add-to-cart
+        branches: 
+            - main
+            - '!feature/*' # ignoring pushing to any branch name starting with feature using !
+    pull_request:
+        types:             # whenever ther is PR having activity opened or closed workflow runs
+            - opened
+            - closed
+        paths-ignore: 
+            - README.md
+        branches: 
+            - main
+
+jobs:
+    hello:
+        runs-on: ubuntu-latest
+        steps:
+            - run: echo this workflow/job/step is executed for event type - ${{github.event_name}}
